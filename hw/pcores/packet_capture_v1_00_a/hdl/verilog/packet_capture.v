@@ -64,12 +64,12 @@ module packet_capture
     output                                     m_axis_tlast,
 
     // Slave Stream Ports (interface to data path upstream)
-    input [C_S_AXIS_DATA_WIDTH - 1:0]          s_axis_pd_tdata,
-    input [((C_S_AXIS_DATA_WIDTH / 8)) - 1:0]  s_axis_pd_tstrb,
-    input [C_S_AXIS_TUSER_WIDTH-1:0]           s_axis_pd_tuser,
-    input                                      s_axis_pd_tvalid,
-    output                                     s_axis_pd_tready,
-    input                                      s_axis_pd_tlast,
+    input [C_S_AXIS_DATA_WIDTH - 1:0]          s_axis_tdata,
+    input [((C_S_AXIS_DATA_WIDTH / 8)) - 1:0]  s_axis_tstrb,
+    input [C_S_AXIS_TUSER_WIDTH-1:0]           s_axis_tuser,
+    input                                      s_axis_tvalid,
+    output                                     s_axis_tready,
+    input                                      s_axis_tlast,
 
     // AXI Lite control/status interface
     input                                      s_axi_aclk,
@@ -129,13 +129,6 @@ module packet_capture
    wire                                      m_axis_tvalid_1;
    wire                                      m_axis_tready_1;
    wire                                      m_axis_tlast_1;
-
-   wire [C_M_AXIS_DATA_WIDTH - 1:0] 	     s_axis_tdata;
-   wire [((C_M_AXIS_DATA_WIDTH / 8)) - 1:0]  s_axis_tstrb;
-   wire [C_M_AXIS_TUSER_WIDTH-1:0] 	     s_axis_tuser;
-   wire                                      s_axis_tvalid;
-   wire                                      s_axis_tready;
-   wire                                      s_axis_tlast;
 
    // ------------ Modules -------------
 
@@ -216,12 +209,12 @@ module packet_capture
 
 
          // Slave Stream Ports (interface to RX queues)
-         .s_axis_tdata  (s_axis_pd_tdata),
-         .s_axis_tstrb  (s_axis_pd_tstrb),
-         .s_axis_tuser  (s_axis_pd_tuser),
-         .s_axis_tvalid (s_axis_pd_tvalid),
-         .s_axis_tready (s_axis_pd_tready),
-         .s_axis_tlast  (s_axis_pd_tlast),
+         .s_axis_tdata  (s_axis_tdata),
+         .s_axis_tstrb  (s_axis_tstrb),
+         .s_axis_tuser  (s_axis_tuser),
+         .s_axis_tvalid (s_axis_tvalid),
+         .s_axis_tready (s_axis_tready),
+         .s_axis_tlast  (s_axis_tlast),
 
          // Registers
          .rw_regs       (rw_regs),

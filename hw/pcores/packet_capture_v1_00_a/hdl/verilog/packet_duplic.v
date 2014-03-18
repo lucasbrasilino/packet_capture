@@ -9,7 +9,7 @@
  *        hw/contrib/pcores/packet_capture_v1_00_a
  *
  *  Module:
- *        output_port_lookup
+ *        packet_duplic
  *
  *  Author:
  *        Lucas Brasilino
@@ -131,10 +131,9 @@ module packet_duplic
    // ---------  States ---------------
    localparam S0                    = 0;
    localparam S1                    = 1;
-   localparam S3                    = 3;
+   localparam S2                    = 2;
 
    // ---------- Interal Parameters -----------------
-   localparam NUM_QUEUES_WIDTH    = log2(NUM_QUEUES);
    localparam BUFFER_SIZE         = 4096; 
    localparam BUFFER_SIZE_WIDTH   = log2(BUFFER_SIZE/(C_M_AXIS_DATA_WIDTH/8));
    localparam MAX_PACKET_SIZE     = 1600;
@@ -186,7 +185,17 @@ module packet_duplic
    // ------------- Logic ------------
 
    assign s_axis_tready = !fifo_0_nearly_full;
-   
+      // Port 0 wires
+   assign m_axis_tuser_0 = fifo_0_out_tuser;
+   assign m_axis_tdata_0 = fifo_0_out_tdata;
+   assign m_axis_tlast_0 = fifo_0_out_tlast;
+   assign m_axis_tstrb_0 = fifo_0_out_tstrb;
+      //Port 1 wires
+   assign m_axis_tuser_1 = fifo_1_out_tuser;
+   assign m_axis_tdata_1 = fifo_1_out_tdata;
+   assign m_axis_tlast_1 = fifo_1_out_tlast;
+   assign m_axis_tstrb_1 = fifo_1_out_tstrb;
+
    always @(*) begin
       fifo_0_rd_en = 0;
       fifo_1_rd_en = 0;
@@ -195,18 +204,6 @@ module packet_duplic
       state_next = state;
       fifo_1_in_tuser = fifo_0_out_tuser;
 			
-      // Port 0 wires
-      m_axis_tuser_0 = fifo_0_out_tuser;
-      m_axis_tdata_0 = fifo_0_out_tdata;
-      m_axis_tlast_0 = fifo_0_out_tlast;
-      m_axis_tstrb_0 = fifo_0_out_tstrb;
-      
-      //Port 1 wires
-      m_axis_tuser_1 = fifo_1_out_tuser;
-      m_axis_tdata_1 = fifo_1_out_tdata;
-      m_axis_tlast_1 = fifo_1_out_tlast;
-      m_axis_tstrb_1 = fifo_1_out_tstrb;
-
       case (state)  //Moore machine :-)
 	S0: begin
 	   m_axis_tvalid_0 = !fifo_0_empty;
@@ -226,20 +223,22 @@ module packet_duplic
 	      if (fifo_0_out_tlast)
 		state_next = S2;
 	   end
+	end
 	S2: begin
 	   m_axis_tvalid_1 = !fifo_1_empty;
 	   if (m_axis_tvalid_1 && m_axis_tready_1) begin
 	      fifo_1_rd_en = 1;
 	      if (fifo_1_out_tlast)
 		state_next = S0;
+	   end
 	end
       endcase
-    end	   
-
+    end // always @(*)
+   
    always @(posedge axi_aclk) begin
       if (~axi_aresetn)
 	state <= S0;
       else
 	state <= state_next;
-   end
+   end //always @(posedge axi_aclk)
 endmodule
