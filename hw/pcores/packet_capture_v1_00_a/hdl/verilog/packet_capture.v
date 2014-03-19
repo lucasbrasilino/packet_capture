@@ -131,7 +131,7 @@ module packet_capture
    wire                                      m_axis_tlast_1;
 
    // ------------ Modules -------------
-
+/*
    axi_lite_regs
    #( .C_S_AXI_DATA_WIDTH   (C_S_AXI_DATA_WIDTH),
       .C_S_AXI_ADDR_WIDTH   (C_S_AXI_ADDR_WIDTH),
@@ -173,7 +173,7 @@ module packet_capture
          .wo_defaults     (wo_defaults),
          .ro_regs         (ro_regs)
         );
-
+*/
    packet_duplic #
    (
      .C_M_AXIS_DATA_WIDTH  (C_M_AXIS_DATA_WIDTH),
@@ -224,14 +224,16 @@ module packet_capture
          .ro_regs       (ro_regs)
        );
 
+   /* Unfortunatelly, input_arbiter doesn't deal very well with
+      queues number other than the default*/
    input_arbiter #(
-		   .NUM_QUEUES(2)
+		   .NUM_QUEUES(5)
 		   )
    input_arbiter
    (
     // Clock and Reset - Global signals
     .axi_aclk      (s_axi_aclk),
-    .axi_aresetn   (s_axi_aresetn),
+    .axi_resetn   (~s_axi_aresetn),
 
     .m_axis_tdata (m_axis_tdata),
     .m_axis_tstrb (m_axis_tstrb),
@@ -247,12 +249,33 @@ module packet_capture
     .s_axis_tready_0 (m_axis_tready_0),
     .s_axis_tlast_0 (m_axis_tlast_0),
 
-    .s_axis_tdata_1 (m_axis_tdata_1),
-    .s_axis_tstrb_1 (m_axis_tstrb_1),
-    .s_axis_tuser_1 (m_axis_tuser_1),
-    .s_axis_tvalid_1 (m_axis_tvalid_1),
-    .s_axis_tready_1 (m_axis_tready_1),
-    .s_axis_tlast_1 (m_axis_tlast_1)
+    .s_axis_tdata_1 ({C_S_AXIS_DATA_WIDTH{1'b0}}),
+    .s_axis_tstrb_1 ({(C_S_AXIS_DATA_WIDTH/8){1'b0}}),
+    .s_axis_tuser_1 ({C_S_AXIS_TUSER_WIDTH{1'b0}}),
+    .s_axis_tvalid_1 (1'b0),
+    .s_axis_tready_1 (),
+    .s_axis_tlast_1 (1'b0),
+
+    .s_axis_tdata_2 ({C_S_AXIS_DATA_WIDTH{1'b0}}),
+    .s_axis_tstrb_2 ({(C_S_AXIS_DATA_WIDTH/8){1'b0}}),
+    .s_axis_tuser_2 ({C_S_AXIS_TUSER_WIDTH{1'b0}}),
+    .s_axis_tvalid_2 (1'b0),
+    .s_axis_tready_2 (),
+    .s_axis_tlast_2 (1'b0),
+
+    .s_axis_tdata_3 ({C_S_AXIS_DATA_WIDTH{1'b0}}),
+    .s_axis_tstrb_3 ({(C_S_AXIS_DATA_WIDTH/8){1'b0}}),
+    .s_axis_tuser_3 ({C_S_AXIS_TUSER_WIDTH{1'b0}}),
+    .s_axis_tvalid_3 (1'b0),
+    .s_axis_tready_3 (),
+    .s_axis_tlast_3 (1'b0),
+
+    .s_axis_tdata_4 ({C_S_AXIS_DATA_WIDTH{1'b0}}),
+    .s_axis_tstrb_4 ({(C_S_AXIS_DATA_WIDTH/8){1'b0}}),
+    .s_axis_tuser_4 ({C_S_AXIS_TUSER_WIDTH{1'b0}}),
+    .s_axis_tvalid_4 (1'b0),
+    .s_axis_tready_4 (),
+    .s_axis_tlast_4 (1'b0)
     );
    
 endmodule
