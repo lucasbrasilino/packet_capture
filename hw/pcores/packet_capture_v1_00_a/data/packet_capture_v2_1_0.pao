@@ -38,6 +38,6 @@
 
 lib proc_common_v3_00_a  all
 lib axi_lite_ipif_v1_01_a  all
-lib nf10_proc_common_v1_00_a  all
+lib nf10_input_arbiter_v1_10_a all
 lib packet_capture_v1_00_a packet_duplic verilog
 lib packet_capture_v1_00_a packet_capture verilog

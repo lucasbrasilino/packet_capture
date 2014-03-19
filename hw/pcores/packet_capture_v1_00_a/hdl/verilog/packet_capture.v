@@ -224,7 +224,10 @@ module packet_capture
          .ro_regs       (ro_regs)
        );
 
-   input_arbiter #(.NUM_QUEUES(2))
+   input_arbiter #(
+		   .NUM_QUEUES(2)
+		   )
+   input_arbiter
    (
     // Clock and Reset - Global signals
     .axi_aclk      (s_axi_aclk),
