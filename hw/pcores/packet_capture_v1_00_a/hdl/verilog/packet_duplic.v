@@ -179,7 +179,7 @@ module packet_duplic
 				      fifo_0_out_tstrb, fifo_0_out_tdata}),
          .wr_en                     (fifo_1_wr_en),
          .rd_en                     (fifo_1_rd_en),
-         .reset                     (~axi_resetn),
+         .reset                     (~axi_aresetn),
          .clk                       (axi_aclk));
    
    // ------------- Logic ------------
