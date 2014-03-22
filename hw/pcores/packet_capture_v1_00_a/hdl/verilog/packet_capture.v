@@ -249,12 +249,12 @@ module packet_capture
     .s_axis_tready_0 (m_axis_tready_0),
     .s_axis_tlast_0 (m_axis_tlast_0),
 
-    .s_axis_tdata_1 ({C_S_AXIS_DATA_WIDTH{1'b0}}),
-    .s_axis_tstrb_1 ({(C_S_AXIS_DATA_WIDTH/8){1'b0}}),
-    .s_axis_tuser_1 ({C_S_AXIS_TUSER_WIDTH{1'b0}}),
-    .s_axis_tvalid_1 (1'b0),
-    .s_axis_tready_1 (),
-    .s_axis_tlast_1 (1'b0),
+    .s_axis_tdata_1 (m_axis_tdata_1),
+    .s_axis_tstrb_1 (m_axis_tstrb_1),
+    .s_axis_tuser_1 (m_axis_tuser_1),
+    .s_axis_tvalid_1 (m_axis_tvalid_1),
+    .s_axis_tready_1 (m_axis_tready_1),
+    .s_axis_tlast_1 (m_axis_tlast_1),
 
     .s_axis_tdata_2 ({C_S_AXIS_DATA_WIDTH{1'b0}}),
     .s_axis_tstrb_2 ({(C_S_AXIS_DATA_WIDTH/8){1'b0}}),
