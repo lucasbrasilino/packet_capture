@@ -170,7 +170,7 @@ module input_arbiter
          .din                            ({in_tlast[i], in_tuser[i], in_tstrb[i], in_tdata[i]}),
          .wr_en                          (in_tvalid[i] & ~nearly_full[i]),
          .rd_en                          (rd_en[i]),
-         .reset                          (~axi_resetn),
+         .reset                          (axi_resetn),
          .clk                            (axi_aclk));
    end
    endgenerate
