@@ -47,13 +47,13 @@ module input_arbiter
     parameter C_S_AXIS_DATA_WIDTH=256,
     parameter C_M_AXIS_TUSER_WIDTH=128,
     parameter C_S_AXIS_TUSER_WIDTH=128,
-    parameter NUM_QUEUES=5
+    parameter NUM_QUEUES=2
 )
 (
     // Part 1: System side signals
     // Global Ports
     input axi_aclk,
-    input axi_resetn,
+    input axi_aresetn,
 
     // Master Stream Ports (interface to data path)
     output [C_M_AXIS_DATA_WIDTH - 1:0] m_axis_tdata,
@@ -77,7 +77,7 @@ module input_arbiter
     input  s_axis_tvalid_1,
     output s_axis_tready_1,
     input  s_axis_tlast_1,
-
+/*
     input [C_S_AXIS_DATA_WIDTH - 1:0] s_axis_tdata_2,
     input [((C_S_AXIS_DATA_WIDTH / 8)) - 1:0] s_axis_tstrb_2,
     input [C_S_AXIS_TUSER_WIDTH-1:0] s_axis_tuser_2,
@@ -98,7 +98,7 @@ module input_arbiter
     input  s_axis_tvalid_4,
     output s_axis_tready_4,
     input  s_axis_tlast_4,
-
+*/
    // stats
     output reg pkt_fwd
 
@@ -170,7 +170,7 @@ module input_arbiter
          .din                            ({in_tlast[i], in_tuser[i], in_tstrb[i], in_tdata[i]}),
          .wr_en                          (in_tvalid[i] & ~nearly_full[i]),
          .rd_en                          (rd_en[i]),
-         .reset                          (axi_resetn),
+         .reset                          (~axi_aresetn),
          .clk                            (axi_aclk));
    end
    endgenerate
@@ -190,7 +190,7 @@ module input_arbiter
    assign in_tvalid[1]       = s_axis_tvalid_1;
    assign in_tlast[1]        = s_axis_tlast_1;
    assign s_axis_tready_1    = !nearly_full[1];
-
+/********
    assign in_tdata[2]        = s_axis_tdata_2;
    assign in_tstrb[2]        = s_axis_tstrb_2;
    assign in_tuser[2]        = s_axis_tuser_2;
@@ -211,13 +211,8 @@ module input_arbiter
    assign in_tvalid[4]       = s_axis_tvalid_4;
    assign in_tlast[4]        = s_axis_tlast_4;
    assign s_axis_tready_4    = !nearly_full[4];
-
+*/
    assign cur_queue_plus1    = (cur_queue == NUM_QUEUES-1) ? 0 : cur_queue + 1;
-
-   //assign fifo_out_tuser_sel = fifo_out_tuser[cur_queue];
-   //assign fifo_out_tdata_sel = fifo_out_tdata[cur_queue];
-   //assign fifo_out_tlast_sel = fifo_out_tlast[cur_queue];
-   //assign fifo_out_tstrb_sel = fifo_out_tstrb[cur_queue];
 
    assign m_axis_tuser = fifo_out_tuser[cur_queue];
    assign m_axis_tdata = fifo_out_tdata[cur_queue];
@@ -266,7 +261,7 @@ module input_arbiter
    end // always @ (*)
 
    always @(posedge axi_aclk) begin
-      if(~axi_resetn) begin
+      if(~axi_aresetn) begin
          state <= IDLE;
          cur_queue <= 0;
          pkt_fwd <= 0;

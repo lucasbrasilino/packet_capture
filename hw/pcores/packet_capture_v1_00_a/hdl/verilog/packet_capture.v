@@ -74,6 +74,7 @@ module packet_capture
     // AXI Lite control/status interface
     input                                      s_axi_aclk,
     input                                      s_axi_aresetn,
+
     input  [C_S_AXI_ADDR_WIDTH-1:0]            s_axi_awaddr,
     input                                      s_axi_awvalid,
     output                                     s_axi_awready,
@@ -226,14 +227,12 @@ module packet_capture
 
    /* Unfortunatelly, input_arbiter doesn't deal very well with
       queues number other than the default*/
-   input_arbiter #(
-		   .NUM_QUEUES(5)
-		   )
    input_arbiter
+     input_arbiter
    (
     // Clock and Reset - Global signals
     .axi_aclk      (s_axi_aclk),
-    .axi_resetn   (~s_axi_aresetn),
+    .axi_aresetn   (s_axi_aresetn),
 
     .m_axis_tdata (m_axis_tdata),
     .m_axis_tstrb (m_axis_tstrb),
@@ -254,8 +253,8 @@ module packet_capture
     .s_axis_tuser_1 (m_axis_tuser_1),
     .s_axis_tvalid_1 (m_axis_tvalid_1),
     .s_axis_tready_1 (m_axis_tready_1),
-    .s_axis_tlast_1 (m_axis_tlast_1),
-
+    .s_axis_tlast_1 (m_axis_tlast_1)
+/*
     .s_axis_tdata_2 ({C_S_AXIS_DATA_WIDTH{1'b0}}),
     .s_axis_tstrb_2 ({(C_S_AXIS_DATA_WIDTH/8){1'b0}}),
     .s_axis_tuser_2 ({C_S_AXIS_TUSER_WIDTH{1'b0}}),
@@ -276,6 +275,7 @@ module packet_capture
     .s_axis_tvalid_4 (1'b0),
     .s_axis_tready_4 (),
     .s_axis_tlast_4 (1'b0)
+ */
     );
    
 endmodule

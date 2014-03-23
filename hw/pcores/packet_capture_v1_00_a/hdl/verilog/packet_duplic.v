@@ -199,6 +199,7 @@ module packet_duplic
    always @(*) begin
       fifo_0_rd_en = 0;
       fifo_1_rd_en = 0;
+      fifo_1_wr_en = 0;
       m_axis_tvalid_0 = 0;
       m_axis_tvalid_1 = 0;
       state_next = state;
