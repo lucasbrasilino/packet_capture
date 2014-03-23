@@ -8,7 +8,11 @@ from reg_defines_reference_nic import *
 
 conn = ('../connections/conn', [])
 #nftest_init(sim_loop = ['nf0','nf1','nf2','nf3'], hw_config = [conn])
+<<<<<<< HEAD
 nftest_init()
+=======
+nftest_init(hw_config = [conn])
+>>>>>>> d2dd8517cf27541c32d56935ae24317e6edda0c5
 nftest_start()
 
 # set parameters
