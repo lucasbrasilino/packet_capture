@@ -127,7 +127,9 @@ module packet_duplic
    
    reg [1:0]                        state;
    reg [1:0]                        state_next;
- 				    
+
+   wire [7:0] 			    oq_port;
+ 			    
    // ---------  States ---------------
    localparam S0                    = 0;
    localparam S1                    = 1;
@@ -195,7 +197,9 @@ module packet_duplic
    assign m_axis_tdata_1 = fifo_1_out_tdata;
    assign m_axis_tlast_1 = fifo_1_out_tlast;
    assign m_axis_tstrb_1 = fifo_1_out_tstrb;
-
+   // output queue port
+   assign oq_port        = 8'h80;
+   
    always @(*) begin
       fifo_0_rd_en = 0;
       fifo_1_rd_en = 0;
@@ -211,7 +215,7 @@ module packet_duplic
 	   if (m_axis_tvalid_0 && m_axis_tready_0) begin
 	      fifo_0_rd_en = 1;
 	      fifo_1_wr_en = 1;
-	      fifo_1_in_tuser = {fifo_0_out_tuser[127:32],16'h80,
+	      fifo_1_in_tuser = {fifo_0_out_tuser[127:32],oq_port,
 			       fifo_0_out_tuser[23:0]};
 	      state_next = S1;
 	   end
