@@ -122,14 +122,14 @@ module packet_duplic
    wire [C_M_AXIS_TUSER_WIDTH-1:0]  fifo_1_out_tuser;
    wire [C_M_AXIS_DATA_WIDTH-1:0]   fifo_1_out_tdata;
    wire [C_M_AXIS_DATA_WIDTH/8-1:0] fifo_1_out_tstrb;
-   wire  	                    fifo_1_out_tlast;
+   wire  	                        fifo_1_out_tlast;
    wire                             fifo_1_tvalid;
    wire                             fifo_1_tlast;
    
    reg [1:0]                        state;
    reg [1:0]                        state_next;
 
-   wire [7:0] 			    oq_port;
+   wire [7:0] 			            output_dma_port;
  			    
    // ---------  States ---------------
    localparam S0                    = 0;
@@ -199,7 +199,7 @@ module packet_duplic
    assign m_axis_tlast_1 = fifo_1_out_tlast;
    assign m_axis_tstrb_1 = fifo_1_out_tstrb;
    // output queue port from write-only register
-   assign oq_port        = wo_regs;
+   assign output_dma_port        = wo_regs[7:0];
    
    always @(*) begin
       fifo_0_rd_en = 0;
@@ -216,7 +216,7 @@ module packet_duplic
 	   if (m_axis_tvalid_0 && m_axis_tready_0) begin
 	      fifo_0_rd_en = 1;
 	      fifo_1_wr_en = 1;
-	      fifo_1_in_tuser = {fifo_0_out_tuser[127:32],oq_port,
+	      fifo_1_in_tuser = {fifo_0_out_tuser[127:32],output_dma_port,
 			       fifo_0_out_tuser[23:0]};
 	      state_next = S1;
 	   end
