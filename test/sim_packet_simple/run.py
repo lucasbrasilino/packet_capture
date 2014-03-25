@@ -36,7 +36,7 @@ for j in range (DEV_NUM):
 for j in range (DEV_NUM):
 	iface = "nf%d" % j
 	nftest_send_phy(iface,pkts[j])
-        nftest_expect_dma(iface,pkts[j])
-	nftest_expect_dma("nf3",pkts[j])
+        nftest_expect_dma(iface,pkts[j]*2)
+
 mres=[]
 nftest_finish(mres)

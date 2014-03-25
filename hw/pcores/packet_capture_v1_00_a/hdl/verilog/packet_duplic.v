@@ -83,10 +83,11 @@ module packet_duplic
     input                                      s_axis_tlast,
 
     // Registers
-    input  [NUM_RW_REGS*C_S_AXI_DATA_WIDTH-1:0]  rw_regs,
-    output [NUM_RW_REGS*C_S_AXI_DATA_WIDTH-1:0]  rw_defaults,
+    //input  [NUM_RW_REGS*C_S_AXI_DATA_WIDTH-1:0]  rw_regs,
+    //output [NUM_RW_REGS*C_S_AXI_DATA_WIDTH-1:0]  rw_defaults,
+    //input  [NUM_WO_REGS*C_S_AXI_DATA_WIDTH-1:0]  wo_regs,
+    //output [NUM_WO_REGS*C_S_AXI_DATA_WIDTH-1:0]  wo_defaults,
     input  [NUM_WO_REGS*C_S_AXI_DATA_WIDTH-1:0]  wo_regs,
-    output [NUM_WO_REGS*C_S_AXI_DATA_WIDTH-1:0]  wo_defaults,
     input  [NUM_RO_REGS*C_S_AXI_DATA_WIDTH-1:0]  ro_regs
 );
 
@@ -197,8 +198,8 @@ module packet_duplic
    assign m_axis_tdata_1 = fifo_1_out_tdata;
    assign m_axis_tlast_1 = fifo_1_out_tlast;
    assign m_axis_tstrb_1 = fifo_1_out_tstrb;
-   // output queue port
-   assign oq_port        = 8'h80;
+   // output queue port from write-only register
+   assign oq_port        = wo_regs;
    
    always @(*) begin
       fifo_0_rd_en = 0;
