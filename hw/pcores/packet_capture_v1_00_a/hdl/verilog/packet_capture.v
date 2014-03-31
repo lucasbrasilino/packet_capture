@@ -112,10 +112,7 @@ module packet_capture
 
    // ------------- Regs/ wires -----------
 
-   //wire [NUM_RW_REGS*C_S_AXI_DATA_WIDTH-1:0] rw_regs;
-   //wire [NUM_RW_REGS*C_S_AXI_DATA_WIDTH-1:0] rw_defaults;
    wire [NUM_WO_REGS*C_S_AXI_DATA_WIDTH-1:0] wo_regs;
-   //wire [NUM_WO_REGS*C_S_AXI_DATA_WIDTH-1:0] wo_defaults;
    wire [NUM_RO_REGS*C_S_AXI_DATA_WIDTH-1:0] ro_regs;
    
    wire                                            Bus2IP_Clk;
