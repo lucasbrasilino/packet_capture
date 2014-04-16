@@ -128,8 +128,11 @@ module packet_duplic
    
    reg [1:0]                        state;
    reg [1:0]                        state_next;
+   reg                              fifo_1_wr_en_state;
+   reg                              fifo_1_wr_en_state_next;
 
    wire [7:0] 			            output_dma_port;
+   wire [15:0]                      ethertype;
  			    
    // ---------  States ---------------
    localparam S0                    = 0;
@@ -200,6 +203,7 @@ module packet_duplic
    assign m_axis_tstrb_1 = fifo_1_out_tstrb;
    // output queue port from write-only register
    assign output_dma_port        = wo_regs[7:0];
+   assign ethertype              = fifo_0_out_tdata[111:96];
    
    always @(*) begin
       fifo_0_rd_en = 0;
@@ -208,6 +212,7 @@ module packet_duplic
       m_axis_tvalid_0 = 0;
       m_axis_tvalid_1 = 0;
       state_next = state;
+      fifo_1_wr_en_state_next = fifo_1_wr_en_state;
       fifo_1_in_tuser = fifo_0_out_tuser;
 			
       case (state)  //Moore machine :-)
@@ -215,9 +220,13 @@ module packet_duplic
 	   m_axis_tvalid_0 = !fifo_0_empty;
 	   if (m_axis_tvalid_0 && m_axis_tready_0) begin
 	      fifo_0_rd_en = 1;
-	      fifo_1_wr_en = 1;
+	      //fifo_1_wr_en = 1;
 	      fifo_1_in_tuser = {fifo_0_out_tuser[127:32],output_dma_port,
 			       fifo_0_out_tuser[23:0]};
+		  if (ethertype  == 16'h0008) begin
+		      fifo_1_wr_en = 1;
+		      fifo_1_wr_en_state_next = 1;
+		  end
 	      state_next = S1;
 	   end
         end
@@ -225,9 +234,16 @@ module packet_duplic
 	   m_axis_tvalid_0 = !fifo_0_empty;
 	   if (m_axis_tvalid_0 && m_axis_tready_0) begin
 	      fifo_0_rd_en = 1;
-	      fifo_1_wr_en = 1;
-	      if (fifo_0_out_tlast)
-		state_next = S2;
+	      //fifo_1_wr_en = 1;
+	      if (fifo_1_wr_en_state)
+	           fifo_1_wr_en = 1;
+	      if (fifo_0_out_tlast) begin
+	           fifo_1_wr_en_state_next = 0;
+	           if(fifo_1_wr_en_state)
+	               state_next = S2;
+	           else
+	               state_next = S0;
+	      end
 	   end
 	end
 	S2: begin
@@ -242,9 +258,13 @@ module packet_duplic
     end // always @(*)
    
    always @(posedge axi_aclk) begin
-      if (~axi_aresetn)
-	state <= S0;
-      else
-	state <= state_next;
+      if (~axi_aresetn) begin
+	       state <= S0;
+	       fifo_1_wr_en_state <= 0;
+	  end
+        else begin
+	       state <= state_next;
+	       fifo_1_wr_en_state <= fifo_1_wr_en_state_next;
+	    end
    end //always @(posedge axi_aclk)
 endmodule
